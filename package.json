@@ -8,7 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "vite preview --host"
+    "start": "vite preview --host",
+    "heroku-local": "yarn install --production=false && yarn build && yarn start"
   },
   "dependencies": {
     "date-fns": "^4.1.0",
