@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3001";
+import { API_URL } from './config';
 
 export const login = async (formData) => {
   const res = await fetch(`${API_URL}/users/sign_in.json`, {

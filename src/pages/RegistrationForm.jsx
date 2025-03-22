@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { setAuthToken } from "../utils/auth";
+import { API_URL } from "../config";
 
 const RegistrationForm = () => {
   const navigate = useNavigate();
@@ -18,10 +19,6 @@ const RegistrationForm = () => {
       [name]: value,
     }));
   };
-
-  const API_URL = process.env.NODE_ENV === "production" 
-  ? "https://your-rails-api.herokuapp.com" 
-  : "http://localhost:3001";
 
   const handleSubmit = async (e) => {
     e.preventDefault();

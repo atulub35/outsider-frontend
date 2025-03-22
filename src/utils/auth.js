@@ -1,6 +1,4 @@
-const API_URL = process.env.NODE_ENV === "production" 
-  ? "https://your-rails-api.herokuapp.com" 
-  : "http://localhost:3001";
+import { API_URL } from '../config';
 
 export const getAuthToken = () => {
   return localStorage.getItem('jwt_token');
