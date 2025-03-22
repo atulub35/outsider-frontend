@@ -1,5 +1,4 @@
 import { API_URL } from './config';
-
 export const login = async (formData) => {
   const res = await fetch(`${API_URL}/users/sign_in.json`, {
     method: "POST",
@@ -16,6 +15,9 @@ export const login = async (formData) => {
 export const getProfile = async () => {
   const res = await fetch(`${API_URL}/api/v1/users/1`, {
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 
   return res.json();
@@ -25,6 +27,9 @@ export const logout = async () => {
   await fetch(`${API_URL}/users/sign_out.json`, {
     method: "DELETE",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 };
 
@@ -32,6 +37,9 @@ export const getPosts = async () => {
   return await fetch(`${API_URL}/posts.json`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 };
 
