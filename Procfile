@@ -1,2 +1,2 @@
 web: yarn start
-build: yarn build 
+build: yarn install && yarn build 
