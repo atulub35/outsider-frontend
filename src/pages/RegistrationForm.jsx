@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { setAuthToken } from "../utils/auth";
 import { API_URL } from "../config";
+import { logout } from "../api";
 
 const RegistrationForm = () => {
   const navigate = useNavigate();
@@ -24,24 +25,25 @@ const RegistrationForm = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    try {
-      const response = await fetch(`${API_URL}/users/sign_in.json`, {
-        method: "POST",
-        credentials: "include", // Important for session-based auth
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ user: formData }),
-      });
+    const url=`${API_URL}/users/sign_in`
+    try{
+        const response=await fetch(url, {
+            method: "post",
+            headers: {
+                'content-type': 'application/json',
+                'accept': 'application/json'
+          },
+            body: JSON.stringify({ user: formData })
+        })
+        const data = await response.json()
+        if (response.ok) {
+          setAuthToken(`Bearer ${data.data.token}`);
+          navigate("/");
+        } else {
+          setErrors(data.errors);
+        }
 
-      const data = await response.json();
-
-      if (response.ok) {
-        // setAuthToken(data.token);
-        navigate("/");
-      } else {
-        setErrors(data.errors);
-      }
+        setIsSubmitting(false)
     } catch (error) {
       console.error("Registration error:", error);
       setErrors({ general: "An error occurred during registration" });
@@ -54,6 +56,7 @@ const RegistrationForm = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
+          <button onClick={()=> logout()}>Logout</button>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Create your account
           </h2>
@@ -80,7 +83,7 @@ const RegistrationForm = () => {
                 onChange={handleChange}
                 className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
                   errors.email ? 'border-red-300' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                } placeholder-gray-500 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
                 placeholder="Email address"
               />
               {errors.email && (
@@ -101,7 +104,7 @@ const RegistrationForm = () => {
                 onChange={handleChange}
                 className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
                   errors.password ? 'border-red-300' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+                } placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
                 placeholder="Password (6 characters minimum)"
               />
               {errors.password && (
