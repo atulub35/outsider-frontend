@@ -1,4 +1,4 @@
-import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextareaAutosize } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextareaAutosize, TextField } from '@mui/material';
 import React, { useState } from 'react';
 
 const CreatePostModal = ({ isOpen, onClose, onSubmit }) => {
@@ -23,6 +23,12 @@ const CreatePostModal = ({ isOpen, onClose, onSubmit }) => {
             onClose={onClose}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
+            sx={{
+                "& .MuiDialog-paper": {
+                    width: "500px",
+                    maxWidth: "90vw",
+                },
+            }}
         >
             <form onSubmit={handleSubmit}>
                 <DialogTitle id="alert-dialog-title">
@@ -31,12 +37,7 @@ const CreatePostModal = ({ isOpen, onClose, onSubmit }) => {
                 <DialogContent>
                 <DialogContentText id="alert-dialog-description">
                     {/* TODO: Get content from the modal below like textarea and save */}
-                    <TextareaAutosize
-                        aria-label="minimum height"
-                        onChange={(e) => setPostData({ ...postData, body: e.target.value })}
-                        minRows={3}
-                        placeholder="Minimum 3 rows"
-                        />
+                    <TextField sx={{ width: "100%" }} onChange={(e) => setPostData({ ...postData, body: e.target.value })} id="outlined-basic" variant="outlined" />
                 </DialogContentText>
                 </DialogContent>
                 <DialogActions>

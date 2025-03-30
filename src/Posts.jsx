@@ -63,13 +63,14 @@ const PrivateText = () => {
 
     return(
         <div>
-            <div className="mb-8">
+            <Box sx={{ justifyContent: "end", display: "flex", mb: 4 }}>
                 <Button
+                    variant="contained"
                     onClick={() => setIsModalOpen(true)}>
                     Create New Post
                 </Button>
-            </div>
-            <Box className="flex flex-col gap-4">
+            </Box>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                 {posts.length ? posts.map((post)=> 
                     <Post 
                         key={post.id} 
