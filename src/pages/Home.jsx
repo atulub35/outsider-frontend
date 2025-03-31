@@ -1,9 +1,13 @@
 import React, { useState } from 'react'
 import Posts from '../Posts'
+import Theme from '../components/Theme'
 const Home = ({  currentUser }) => {
 
     return (
-        <Posts />
+        <>
+            <Theme />
+            <Posts />
+        </>
     )
 }
 

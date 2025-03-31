@@ -10,6 +10,8 @@ const PrivateText = () => {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const api = useApi()
     const { token } = useAuth()
+    const [mode, setMode] = useState(null)
+    const [selectedPost, setSelectedPost] = useState(null)
     const handleLike = async (postId) => {
         try {
             const response = await api.like(postId)
@@ -59,14 +61,37 @@ const PrivateText = () => {
         }
     }
 
+    const showCreatePostModal = () => {
+        setIsModalOpen(true)
+        setMode('create')
+    }
+
+    const showEditModal = (postId) => {
+        setIsModalOpen(true)
+        setMode('edit')
+    }
+
+    const showDeleteModal = (postId) => {
+        setIsModalOpen(true)
+        setMode('delete')
+    }
+
+    const handleDeletePost = async () => {
+        try {
+            await api.deletePost(selectedPost.id)
+        } catch (error) {
+            console.error('Error deleting post:', error)
+        }
+    }
+
     if (loading) return <p>Loading...</p>
 
     return(
         <div>
             <Box sx={{ justifyContent: "end", display: "flex", mb: 4 }}>
                 <Button
-                    variant="contained"
-                    onClick={() => setIsModalOpen(true)}>
+                    variant="outlined"
+                    onClick={showCreatePostModal}>
                     Create New Post
                 </Button>
             </Box>
@@ -77,6 +102,9 @@ const PrivateText = () => {
                         post={post} 
                         onLike={handleLike} 
                         handleRepost={handleRepost} 
+                        showEditModal={showEditModal}
+                        showDeleteModal={showDeleteModal}
+                        setSelectedPost={setSelectedPost}
                     />
                 ) : 'No posts found' }
             </Box>
@@ -84,6 +112,9 @@ const PrivateText = () => {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onSubmit={handleCreatePost} 
+                mode={mode}
+                selectedPost={selectedPost}
+                handleDeletePost={handleDeletePost}
             />
         </div>
     )
