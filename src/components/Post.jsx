@@ -3,21 +3,20 @@ import { formatDistanceToNow } from 'date-fns'
 import { Avatar, Card, CardContent, CardHeader, IconButton, Typography, CardActions, Button, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import ShareIcon from '@mui/icons-material/Share'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
-import ContentCut from '@mui/icons-material/ContentCut';
-import ContentCopy from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';    
 
 const Post = ({ post, onLike, handleRepost, showEditModal, showDeleteModal, setSelectedPost }) => {
   const {
     body,
+    title,
     created_at,
     likes_count,
     repost_count,
     user: { name, email, avatar_url }
   } = post
+  
 
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
@@ -85,8 +84,9 @@ const Post = ({ post, onLike, handleRepost, showEditModal, showDeleteModal, setS
            
             <CardContent>
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    {body}
+                  {title}
                 </Typography>
+                <Typography variant="body2" sx={{ color: 'text.secondary' }} dangerouslySetInnerHTML={{ __html: body.body }} />
             </CardContent>
             <CardActions disableSpacing sx={{ gap: 1 }}>
                 <Button onClick={() => onLike(post.id)} variant="outlined" startIcon={<FavoriteIcon />}>

@@ -1,99 +1,46 @@
 import { useAuth } from '../contexts/AuthContext'
-import { API_URL } from '../config'
+import { axiosInstance } from '../utils/axios'
 
 export const useApi = () => {
   const { token } = useAuth()
 
-  const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    ...(token && { "Authorization": token })
-  }
+  // Request interceptor for adding auth token
+  // axiosInstance.interceptors.request.use(
+  //   (config) => {
+  //     if (token) {
+  //       console.log('token reacher here', token);
+        
+  //       config.headers.Authorization = token
+  //     }
+  //     return config
+  //   },
+  //   (error) => Promise.reject(error)
+  // )
 
   const api = {
     login: async (formData) => {
       try {
-        const response = await fetch(`${API_URL}/users/sign_in.json`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ user: formData }),
-        })
-        
-        if (!response.ok) {
-          throw new Error('Login failed')
-        }
-        
-        return await response.json()
+        return await axiosInstance.post('/users/sign_in.json', { user: formData })
       } catch (error) {
         throw error
       }
     },
 
-    getProfile: async () => {
-      const res = await fetch(`${API_URL}/profiles/show.json`, {
-        headers
-      })
-      return res.json()
-    },
+    getProfile: () => axiosInstance.get('/profiles/show.json'),
 
-    logout: async () => {
-      await fetch(`${API_URL}/users/sign_out.json`, {
-        method: "DELETE",
-        headers
-      })
-    },
+    logout: () => axiosInstance.delete('/users/sign_out.json'),
 
-    getPosts: async () => {
-      const res = await fetch(`${API_URL}/posts.json`, {
-        method: "GET",
-        headers
-      })
-      return res.json()
-    },
+    getPosts: (page = 1) => axiosInstance.get(`/posts.json?page=${page}`),
 
-    createPost: async (formData) => {
-      const res = await fetch(`${API_URL}/posts.json`, {
-        method: "POST",
-        headers,
-        body: JSON.stringify({ post: formData }),
-      })
-      return res.json()
-    },
+    createPost: (formData) => axiosInstance.post('/posts.json', { post: { body: formData.body, title: formData.title } }),
 
-    updatePost: async (formData) => {
-      const res = await fetch(`${API_URL}/posts.json`, {
-        method: "POST",
-        headers,
-        body: JSON.stringify({ post: formData }),
-      })
-      return res.json()
-    },
+    updatePost: (postId, formData) => axiosInstance.put(`/posts/${postId}.json`, { post: { body: formData.body, title: formData.title } }),
 
-    deletePost: async (postId) => {
-      const res = await fetch(`${API_URL}/posts/${postId}.json`, {
-        method: "DELETE",
-        headers
-      })
-      return res.json()
-    },
+    deletePost: (postId) => axiosInstance.delete(`/posts/${postId}.json`),
 
-    like: async (postId) => {
-      const res = await fetch(`${API_URL}/posts/${postId}/like.json`, {
-        method: "GET",
-        headers
-      })
-      return res.json()
-    },
+    like: (postId) => axiosInstance.get(`/posts/${postId}/like.json`),
 
-    repost: async (postId) => {
-      const res = await fetch(`${API_URL}/posts/${postId}/repost.json`, {
-        method: "GET",
-        headers
-      })
-      return res.json()
-    }
+    repost: (postId) => axiosInstance.get(`/posts/${postId}/repost.json`)
   }
 
   return api

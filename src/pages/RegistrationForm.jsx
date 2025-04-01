@@ -37,6 +37,7 @@ const RegistrationForm = () => {
 
     try {
       const response = await api.login(formData)
+      console.log('response got here in registration form', response)
       if (response.data.token) {
         setAuthToken(response.data.token)
         navigate("/")
@@ -57,12 +58,7 @@ const RegistrationForm = () => {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-        }}
-      >
-        <Button onClick={() => logout()} variant="outlined">
-          Logout
-        </Button>
-        
+        }}>
         <Typography component="h1" variant="h5" sx={{ mt: 2 }}>
           Create your account
         </Typography>

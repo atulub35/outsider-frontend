@@ -1,20 +1,24 @@
-import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextareaAutosize, TextField } from '@mui/material';
-import React, { useState } from 'react';
-
+import { Dialog, DialogTitle, DialogActions, Button, Box, TextField, FormControlLabel } from '@mui/material'
+import React, { useState, useEffect } from 'react'
+import 'react-quill-new/dist/quill.snow.css'
+import ReactQuill from 'react-quill-new'
+import InputAdornment from '@mui/material/InputAdornment';
 const CreatePostModal = ({ isOpen, onClose, onSubmit, mode, handleDeletePost, selectedPost }) => {
-  const [postData, setPostData] = useState({
-    body: ''
-  });
+  const [postData, setPostData] = useState({ body: '', title: '' })
+
+  useEffect(() => {
+    setPostData({ body: selectedPost?.body?.body, title: selectedPost?.title })
+  }, [selectedPost])
 
   console.log(mode, selectedPost)
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    onSubmit(postData);
-    setPostData({ body: '' });
-    onClose();
-  };
+    e.preventDefault()
+    onSubmit(postData)
+    setPostData({ body: '', title: '' })
+    onClose()
+  }
   
 
   return (
@@ -26,7 +30,7 @@ const CreatePostModal = ({ isOpen, onClose, onSubmit, mode, handleDeletePost, se
             aria-describedby="alert-dialog-description"
             sx={{
                 "& .MuiDialog-paper": {
-                    width: "500px",
+                    width: "800px",
                     maxWidth: "90vw",
                 },
             }}
@@ -38,7 +42,17 @@ const CreatePostModal = ({ isOpen, onClose, onSubmit, mode, handleDeletePost, se
                     </DialogTitle>
                     
                     {/* TODO: Get content from the modal below like textarea and save */}
-                    <TextField sx={{ width: "100%", padding: 2 }} onChange={(e) => setPostData({ ...postData, body: e.target.value })} id="outlined-basic" variant="outlined" />
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, padding: 2 }}>
+                        <div>Give a title to your post</div>
+                        <TextField
+                            id="outlined-size-small"
+                            size="small"
+                            value={postData.title}
+                            onChange={(e) => setPostData({ ...postData, title: e.target.value })}
+                        />
+                        <div>What's on your mind?</div>
+                        <ReactQuill theme="snow" value={postData.body} onChange={(value) => setPostData({ ...postData, body: value })} />
+                    </Box>
                 
                 <DialogActions>
                 <Button onClick={onClose}>Cancel</Button>
@@ -52,7 +66,18 @@ const CreatePostModal = ({ isOpen, onClose, onSubmit, mode, handleDeletePost, se
                     <DialogTitle id="alert-dialog-title">
                     {"Edit your post"}
                     </DialogTitle>
-                    <TextField sx={{ width: "100%", padding: 2 }} onChange={(e) => setPostData({ ...postData, body: e.target.value })} id="outlined-basic" variant="outlined" />
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, padding: 2 }}>
+                        <div>Give a title to your post</div>
+                        <TextField
+                            id="outlined-size-small"
+                            defaultValue="Small"
+                            size="small"
+                            value={postData.title}
+                            onChange={(e) => setPostData({ ...postData, title: e.target.value })}
+                        />
+                        <div>What's on your mind?</div>
+                        <ReactQuill theme="snow" value={postData.body} onChange={(value) => setPostData({ ...postData, body: value })} />
+                    </Box>
                     <DialogActions>
                         <Button onClick={onClose}>Cancel</Button>
                         <Button type="submit" autoFocus>
@@ -67,7 +92,7 @@ const CreatePostModal = ({ isOpen, onClose, onSubmit, mode, handleDeletePost, se
                         {"Are you sure you want to delete this post?"}
                     </DialogTitle>
                     <form onSubmit={handleDeletePost}>
-                    <DialogActions>
+                        <DialogActions>
                             <Button color="error" type="submit" autoFocus>
                                 Delete
                             </Button>
@@ -78,7 +103,7 @@ const CreatePostModal = ({ isOpen, onClose, onSubmit, mode, handleDeletePost, se
             )}
         </Dialog>
     </>
-  );
-};
+  )
+}
 
-export default CreatePostModal; 
+export default CreatePostModal 

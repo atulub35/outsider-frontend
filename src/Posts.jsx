@@ -1,9 +1,11 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Post from "./components/Post"
 import CreatePostModal from "./components/CreatePostModal"
 import { Box, Button } from "@mui/material"
 import { useApi } from "./hooks/useApi"
 import { useAuth } from "./contexts/AuthContext"
+import { isTokenSet } from "./utils/axios"
+
 const PrivateText = () => {
     const [posts, setPosts] = useState([])
     const [loading, setLoading] = useState(false)
@@ -12,11 +14,19 @@ const PrivateText = () => {
     const { token } = useAuth()
     const [mode, setMode] = useState(null)
     const [selectedPost, setSelectedPost] = useState(null)
+    const lastPostElementRef = useRef(null)
+    const [pageInfo, setPageInfo] = useState({
+        currentPage: 1,
+        totalPages: 1,
+        hasNextPage: false
+    })
+
     const handleLike = async (postId) => {
+        console.log('post going to like', postId)
         try {
             const response = await api.like(postId)
             setPosts((prev) => prev.map(post => 
-                post.id === postId ? response : post
+                post.id === postId ? response?.data : post
             ))
         } catch (error) {
             console.error('Error liking post:', error)
@@ -27,34 +37,71 @@ const PrivateText = () => {
         try {
             const response = await api.repost(postId)
             setPosts((prev) => prev.map(post => 
-                post.id === postId ? response : post
+                post.id === postId ? response?.data : post
             ))
         } catch (error) {
             console.error('Error reposting:', error)
         }
     }
+    
+    console.log('pageInfo', pageInfo)
+    
+    const fetchPosts = async (page = 1) => {
+        console.log('fetching posts', page)
+        setLoading(true)
+        try {
+            const response = await api.getPosts(page)
+            
+            const { data: { posts: newPosts, pagination } } = response?.data || {}
+            
+            // setPosts(prev => page === 1 ? newPosts : [...prev, ...newPosts])
+            setPosts([...newPosts, ...posts])
+            setPageInfo({
+                currentPage: pagination.current_page,
+                totalPages: pagination.total_pages,
+                hasNextPage: pagination.next_page !== null
+            })
+        } catch (error) {
+            console.error('Error fetching posts:', error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
 
     useEffect(() => {
-        const fetchPosts = async () => {
-            if (posts.length > 0) return
-            setLoading(true)
-            try {
-                const response = await api.getPosts()
-                setPosts(response.data?.posts || [])
-            } catch (error) {
-                console.error('Error fetching posts:', error)
-            } finally {
-                setLoading(false)
-            }
+        if (!isTokenSet()) return
+        
+        fetchPosts()
+    }, [token])
+
+    useEffect(() => {
+        const currentObserver = new IntersectionObserver(
+            entries => {
+                if (entries[0].isIntersecting && pageInfo.hasNextPage && !loading) {
+                    const nextPage = pageInfo.currentPage + 1
+                    fetchPosts(nextPage)
+                    console.log('fetching posts on intersection')
+                }
+            },
+            { threshold: 1.0 }
+        )
+
+        if (lastPostElementRef.current) {
+            currentObserver.observe(lastPostElementRef.current)
         }
 
-        fetchPosts()
-    }, [])
+        return () => {
+            if (lastPostElementRef.current) {
+                currentObserver.unobserve(lastPostElementRef.current)
+            }
+        }
+    }, [pageInfo.hasNextPage, pageInfo.currentPage, loading])
 
-    const handleCreatePost = async (postData) => {
+    const createPost = async (postData) => {
         try {
             const response = await api.createPost(postData)
-            setPosts([response, ...posts])
+            setPosts([response?.data, ...posts])
             setIsModalOpen(false)
         } catch (error) {
             console.error('Error creating post:', error)
@@ -64,6 +111,7 @@ const PrivateText = () => {
     const showCreatePostModal = () => {
         setIsModalOpen(true)
         setMode('create')
+        setSelectedPost(null)
     }
 
     const showEditModal = (postId) => {
@@ -84,6 +132,18 @@ const PrivateText = () => {
         }
     }
 
+
+    const handleUpdatePost = async (postData) => {
+        try {
+            const response = await api.updatePost(selectedPost.id, postData)
+            setPosts((prev) => prev.map(post => 
+                post.id === selectedPost.id ? response?.data : post
+            ))
+        } catch (error) {
+            console.error('Error updating post:', error)
+        }
+    }
+
     if (loading) return <p>Loading...</p>
 
     return(
@@ -96,25 +156,32 @@ const PrivateText = () => {
                 </Button>
             </Box>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                {posts.length ? posts.map((post)=> 
-                    <Post 
-                        key={post.id} 
-                        post={post} 
-                        onLike={handleLike} 
-                        handleRepost={handleRepost} 
-                        showEditModal={showEditModal}
-                        showDeleteModal={showDeleteModal}
-                        setSelectedPost={setSelectedPost}
-                    />
-                ) : 'No posts found' }
+                {posts.length ? <>
+                    {posts.map((post, index) => (
+                        <div
+                            key={post.id}
+                            ref={index === posts.length - 1 ? lastPostElementRef : null}
+                        >
+                            <Post 
+                                post={post} 
+                                onLike={handleLike} 
+                                handleRepost={handleRepost} 
+                                showEditModal={showEditModal}
+                                showDeleteModal={showDeleteModal}
+                                setSelectedPost={setSelectedPost}
+                            />
+                        </div>
+                    ))}
+                </> : 'No posts found' }
             </Box>
             <CreatePostModal 
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                onSubmit={handleCreatePost} 
+                onSubmit={mode === 'create' ? createPost : handleUpdatePost} 
                 mode={mode}
                 selectedPost={selectedPost}
                 handleDeletePost={handleDeletePost}
+                handleUpdatePost={handleUpdatePost}
             />
         </div>
     )

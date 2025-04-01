@@ -1,23 +1,36 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { setupAxiosInterceptors, axiosInstance } from '../utils/axios'
 
 const AuthContext = createContext(null)
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(localStorage.getItem('authToken'))
+  const [token, setToken] = useState(localStorage.getItem('token'))
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    setupAxiosInterceptors(() => {
+      // Clear auth state
+      setToken(null)
+      localStorage.removeItem('token')
+      // Redirect to login
+      navigate('/login')
+    })
+  }, [navigate])
 
   const login = (newToken) => {
     setToken(`Bearer ${newToken}`)
-    localStorage.setItem('authToken', `Bearer ${newToken}`)
   }
 
   const logout = () => {
     setToken(null)
-    localStorage.removeItem('authToken')
+    localStorage.removeItem('token')
+    axiosInstance.defaults.headers.common['Authorization'] = null
   }
 
   return (
     <AuthContext.Provider value={{ token, login, logout }}>
-      {children}
+        {children}
     </AuthContext.Provider>
   )
 }

@@ -10,7 +10,7 @@ const Home = ({  currentUser }) => {
     useEffect(() => {
         const fetchProfile = async () => {
             const response = await api.getProfile()
-            setProfile(response.data.user)
+            setProfile(response?.data?.user)
         }
         fetchProfile()
     }, [])
