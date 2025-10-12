@@ -23,6 +23,18 @@ A modern social media application built with React, Vite, and TailwindCSS. This 
   - PostCSS for CSS processing
   - Autoprefixer for CSS compatibility
 
+## Live Demo
+[https://outsider-284373f8936c.herokuapp.com](https://outsider-react-8de83560ff04.herokuapp.com/)
+
+User Name
+```bash
+atul612@gmail.com
+```
+Password
+```bash
+12345678
+```
+
 ## Getting Started
 
 ### Prerequisites
