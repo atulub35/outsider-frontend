@@ -19,7 +19,8 @@ import {
   Typography,
   Button,
   Stack,
-  Tooltip
+  Tooltip,
+  ListItemButton
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import HomeIcon from '@mui/icons-material/Home'
@@ -54,10 +55,10 @@ export default function Layout() {
             <Toolbar />
             <List>
                 {menuItems.map((item) => (
-                <ListItem button key={item.text} component={Link} to={item.path}>
+                <ListItemButton component="a" href={item.path}>
                     <ListItemIcon>{item.icon}</ListItemIcon>
                     <ListItemText primary={item.text} />
-                </ListItem>
+                </ListItemButton>
                 ))}
             </List>
         </div>

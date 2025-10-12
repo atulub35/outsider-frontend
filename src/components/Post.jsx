@@ -41,7 +41,7 @@ const Post = ({ post, onLike, handleRepost, showEditModal, showDeleteModal, setS
 
   return (
     <>
-        <Card sx={{ }}>
+        <Card sx={{ padding: 1 }}>
             <CardHeader
                 avatar={
                 <Avatar sx={{  }} src={avatar_url} aria-label="recipe">
