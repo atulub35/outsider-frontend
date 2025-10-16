@@ -104,7 +104,7 @@ const PrivateText = () => {
     const createPost = async (postData) => {
         try {
             const response = await api.createPost(postData)
-            setPosts([response?.data, ...posts])
+            setPosts([response?.data?.data, ...posts])
             setIsModalOpen(false)
         } catch (error) {
             console.error('Error creating post:', error)
