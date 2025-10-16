@@ -25,8 +25,10 @@ const PrivateText = () => {
         console.log('post going to like', postId)
         try {
             const response = await api.like(postId)
+            const updatedPost = response?.data?.data
+            
             setPosts((prev) => prev.map(post => 
-                post.id === postId ? response?.data : post
+                post.id === postId ? updatedPost : post
             ))
         } catch (error) {
             console.error('Error liking post:', error)
@@ -36,8 +38,9 @@ const PrivateText = () => {
     const handleRepost = async (postId) => {
         try {
             const response = await api.repost(postId)
+            const updatedPost = response?.data?.data
             setPosts((prev) => prev.map(post => 
-                post.id === postId ? response?.data : post
+                post.id === postId ? updatedPost : post
             ))
         } catch (error) {
             console.error('Error reposting:', error)

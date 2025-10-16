@@ -1,4 +1,4 @@
-import { Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom'
+import { Routes, Route, Link, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import Home from './pages/Home'
 import About from './pages/About'
 import Contact from './pages/Contact'
@@ -36,6 +36,7 @@ const drawerWidth = 240
 export default function Layout() {
     const { token, logout } = useAuth()
     const navigate = useNavigate()
+    const location = useLocation()
     console.log('token reacher here in layout', token)
     const [mobileOpen, setMobileOpen] = useState(false)
 
@@ -55,7 +56,7 @@ export default function Layout() {
             <Toolbar />
             <List>
                 {menuItems.map((item) => (
-                <ListItemButton key={item.text} component={Link} to={item.path} sx={{ color: 'inherit', '&:active': { color: 'inherit' } }}>
+                <ListItemButton selected={location.pathname === item.path} key={item.text} component={Link} to={item.path} sx={{ color: 'inherit', '&:active': { color: 'inherit' } }}>
                     <ListItemIcon sx={{ color: 'inherit' }}>{item.icon}</ListItemIcon>
                     <ListItemText primary={item.text} />
                 </ListItemButton>
