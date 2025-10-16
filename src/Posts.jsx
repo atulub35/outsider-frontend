@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 import Post from "./components/Post"
 import CreatePostModal from "./components/CreatePostModal"
 import { Box, Button } from "@mui/material"
@@ -22,7 +22,6 @@ const PrivateText = () => {
     })
 
     const handleLike = async (postId) => {
-        console.log('post going to like', postId)
         try {
             const response = await api.like(postId)
             const updatedPost = response?.data?.data
@@ -47,18 +46,15 @@ const PrivateText = () => {
         }
     }
     
-    console.log('pageInfo', pageInfo)
     
     const fetchPosts = async (page = 1) => {
-        console.log('fetching posts', page)
         setLoading(true)
         try {
             const response = await api.getPosts(page)
             
             const { data: { posts: newPosts, pagination } } = response?.data || {}
             
-            // setPosts(prev => page === 1 ? newPosts : [...prev, ...newPosts])
-            setPosts([...newPosts, ...posts])
+            setPosts((prev) => page === 1 ? newPosts : [...prev, ...newPosts])
             setPageInfo({
                 currentPage: pagination.current_page,
                 totalPages: pagination.total_pages,
@@ -84,7 +80,6 @@ const PrivateText = () => {
                 if (entries[0].isIntersecting && pageInfo.hasNextPage && !loading) {
                     const nextPage = pageInfo.currentPage + 1
                     fetchPosts(nextPage)
-                    console.log('fetching posts on intersection')
                 }
             },
             { threshold: 1.0 }
@@ -130,9 +125,11 @@ const PrivateText = () => {
     const handleDeletePost = async () => {
         try {
             await api.deletePost(selectedPost.id)
+            setPosts((prev) => prev.filter(post => post.id !== selectedPost.id))
         } catch (error) {
             console.error('Error deleting post:', error)
         }
+        
     }
 
 
@@ -148,7 +145,8 @@ const PrivateText = () => {
         }
     }
 
-    if (loading) return <p>Loading...</p>
+    // Memoize posts to prevent unnecessary re-renders
+    const memoizedPosts = useMemo(() => posts, [posts])
 
     return(
         <div>
@@ -160,11 +158,11 @@ const PrivateText = () => {
                 </Button>
             </Box>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                {posts.length ? <>
-                    {posts.map((post, index) => (
+                {memoizedPosts.length ? <>
+                    {memoizedPosts.map((post, index) => (
                         <div
                             key={post.id}
-                            ref={index === posts.length - 1 ? lastPostElementRef : null}
+                            ref={index === memoizedPosts.length - 1 ? lastPostElementRef : null}
                         >
                             <Post 
                                 post={post} 

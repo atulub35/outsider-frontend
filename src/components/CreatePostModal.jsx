@@ -14,10 +14,20 @@ const CreatePostModal = ({ isOpen, onClose, onSubmit, mode, handleDeletePost, se
   if (!isOpen) return null
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    onSubmit(postData)
-    setPostData({ body: '', title: '' })
-    onClose()
+    switch (mode) {
+        case 'create':
+        case 'edit':
+        onSubmit(postData)
+        setPostData({ body: '', title: '' })
+        onClose()
+        break
+      case 'delete':
+        handleDeletePost()
+        onClose()
+        break
+      default:
+        break
+    }
   }
   
 
@@ -36,7 +46,7 @@ const CreatePostModal = ({ isOpen, onClose, onSubmit, mode, handleDeletePost, se
             }}
         >
             {mode === 'create' && (
-                <form onSubmit={handleSubmit}>
+                <>
                     <DialogTitle id="alert-dialog-title">
                     {"What's on your mind?"}
                     </DialogTitle>
@@ -53,16 +63,16 @@ const CreatePostModal = ({ isOpen, onClose, onSubmit, mode, handleDeletePost, se
                         <div>What's on your mind?</div>
                         <ReactQuill theme="snow" value={postData.body} onChange={(value) => setPostData({ ...postData, body: value })} />
                     </Box>
-                
-                <DialogActions>
-                <Button onClick={onClose}>Cancel</Button>
-                    <Button type="submit" autoFocus>
-                        Post
-                    </Button>
-                </DialogActions>
-            </form>)}
+                    
+                    <DialogActions>
+                    <Button onClick={onClose}>Cancel</Button>
+                        <Button onClick={handleSubmit} autoFocus>
+                            Post
+                        </Button>
+                    </DialogActions>
+                </>)}
             {mode === 'edit' && (
-                <form onSubmit={handleSubmit}>
+                <>
                     <DialogTitle id="alert-dialog-title">
                     {"Edit your post"}
                     </DialogTitle>
@@ -80,25 +90,23 @@ const CreatePostModal = ({ isOpen, onClose, onSubmit, mode, handleDeletePost, se
                     </Box>
                     <DialogActions>
                         <Button onClick={onClose}>Cancel</Button>
-                        <Button type="submit" autoFocus>
+                        <Button onClick={handleSubmit} autoFocus>
                             Save
                         </Button>
                     </DialogActions>
-                </form>
+                </>
             )}
             {mode === 'delete' && (
                 <>
                     <DialogTitle id="alert-dialog-title">
                         {"Are you sure you want to delete this post?"}
                     </DialogTitle>
-                    <form onSubmit={handleDeletePost}>
-                        <DialogActions>
-                            <Button color="error" type="submit" autoFocus>
-                                Delete
-                            </Button>
-                            <Button onClick={onClose}>Cancel</Button>
-                        </DialogActions>
-                    </form>
+                    <DialogActions>
+                        <Button color="error" onClick={handleSubmit} autoFocus>
+                            Delete
+                        </Button>
+                        <Button onClick={onClose}>Cancel</Button>
+                    </DialogActions>
                 </>
             )}
         </Dialog>
