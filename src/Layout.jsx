@@ -55,8 +55,8 @@ export default function Layout() {
             <Toolbar />
             <List>
                 {menuItems.map((item) => (
-                <ListItemButton component="a" href={item.path}>
-                    <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemButton key={item.text} component={Link} to={item.path} sx={{ color: 'inherit', '&:active': { color: 'inherit' } }}>
+                    <ListItemIcon sx={{ color: 'inherit' }}>{item.icon}</ListItemIcon>
                     <ListItemText primary={item.text} />
                 </ListItemButton>
                 ))}
