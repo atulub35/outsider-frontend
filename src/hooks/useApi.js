@@ -28,6 +28,8 @@ export const useApi = () => {
 
     getProfile: () => axiosInstance.get('/profiles/show.json'),
 
+    updateProfile: (formData) => axiosInstance.put('/profile.json', { user: formData }),
+
     logout: () => axiosInstance.delete('/users/sign_out.json'),
 
     getPosts: (page = 1) => axiosInstance.get(`/posts.json?page=${page}`),
