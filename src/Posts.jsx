@@ -139,8 +139,9 @@ const PrivateText = () => {
     const handleUpdatePost = async (postData) => {
         try {
             const response = await api.updatePost(selectedPost.id, postData)
+            const updatedPost = response?.data?.data
             setPosts((prev) => prev.map(post => 
-                post.id === selectedPost.id ? response?.data : post
+                post.id === selectedPost.id ? updatedPost : post
             ))
         } catch (error) {
             console.error('Error updating post:', error)
