@@ -107,7 +107,7 @@ function Contact() {
         <Box>
           {/* Header Section */}
           <Box textAlign="center" mb={6}>
-            <Typography variant="h3" component="h1" fontWeight="bold" color="primary" gutterBottom>
+            <Typography variant="h4" component="h1" fontWeight="bold" gutterBottom>
               Contact Us
             </Typography>
             <Typography variant="h6" color="text.secondary" maxWidth="600px" mx="auto">

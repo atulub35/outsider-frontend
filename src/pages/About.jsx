@@ -103,7 +103,7 @@ function About() {
         <Box>
           {/* Hero Section */}
           <Box textAlign="center" mb={8}>
-            <Typography variant="h2" component="h1" fontWeight="bold" color="primary" gutterBottom>
+            <Typography variant="h4" component="h1" fontWeight="bold" gutterBottom>
               About Outsider
             </Typography>
             <Typography variant="h5" color="text.secondary" maxWidth="800px" mx="auto" paragraph>
@@ -176,7 +176,7 @@ function About() {
 
           {/* Values Section */}
           <Box mb={8}>
-            <Typography variant="h3" component="h2" textAlign="center" gutterBottom color="primary" mb={4}>
+            <Typography variant="h4" component="h2" textAlign="center" gutterBottom color="primary" mb={4}>
               Our Values
             </Typography>
             <Grid container spacing={3}>
@@ -200,7 +200,7 @@ function About() {
 
           {/* Team Section */}
           <Box mb={8}>
-            <Typography variant="h3" component="h2" textAlign="center" gutterBottom color="primary" mb={4}>
+            <Typography variant="h4" component="h2" textAlign="center" gutterBottom color="primary" mb={4}>
               Meet Our Team
             </Typography>
             <Grid container spacing={3}>
@@ -227,7 +227,7 @@ function About() {
 
           {/* Timeline Section */}
           <Box mb={8}>
-            <Typography variant="h3" component="h2" textAlign="center" gutterBottom color="primary" mb={4}>
+            <Typography variant="h4" component="h2" textAlign="center" gutterBottom color="primary" mb={4}>
               Our Journey
             </Typography>
             <Box sx={{ position: 'relative' }}>
@@ -257,7 +257,7 @@ function About() {
 
           {/* Technology Stack */}
           <Box mb={8}>
-            <Typography variant="h3" component="h2" textAlign="center" gutterBottom color="primary" mb={4}>
+            <Typography variant="h4" component="h2" textAlign="center" gutterBottom color="primary" mb={4}>
               Technology Stack
             </Typography>
             <Card elevation={3}>

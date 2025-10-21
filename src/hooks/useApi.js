@@ -28,6 +28,8 @@ export const useApi = () => {
 
     getProfile: () => axiosInstance.get('/profiles/show.json'),
 
+    getImages: () => axiosInstance.get('/images.json'),
+
     updateProfile: (formData) => axiosInstance.put('/profile.json', { user: formData }),
 
     logout: () => axiosInstance.delete('/users/sign_out.json'),
@@ -42,7 +44,25 @@ export const useApi = () => {
 
     like: (postId) => axiosInstance.get(`/posts/${postId}/like.json`),
 
-    repost: (postId) => axiosInstance.get(`/posts/${postId}/repost.json`)
+    repost: (postId) => axiosInstance.get(`/posts/${postId}/repost.json`),
+
+    // Image generation APIs
+    generateImage: (formData) => {
+      const data = new FormData()
+      data.append('prompt', formData.prompt)
+      if (formData.reference_image) {
+        data.append('reference_image', formData.reference_image)
+      }
+      return axiosInstance.post('/api/images', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+    },
+
+    getGeneratedImages: () => axiosInstance.get('/api/images'),
+
+    deleteImage: (imageId) => axiosInstance.delete(`/api/images/${imageId}`)
   }
 
   return api

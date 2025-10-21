@@ -23,7 +23,8 @@ import {
     Chip,
     Paper,
     Fade,
-    Slide
+    Slide,
+    Skeleton
 } from '@mui/material'
 import {
     Edit as EditIcon,
@@ -150,7 +151,7 @@ const Profile = ({ currentUser }) => {
                         {label}
                     </Typography>
                     <Typography variant="h6" color="text.primary">
-                        {value || 'Not provided'}
+                        {value ? value : <Skeleton variant="text" width={100} height={20} />}
                     </Typography>
                 </Box>
             </Stack>
@@ -163,7 +164,7 @@ const Profile = ({ currentUser }) => {
                 <Card elevation={3}>
                     <CardContent sx={{ p: 4 }}>
                         <Stack direction="row" justifyContent="space-between" alignItems="center" mb={4}>
-                            <Typography variant="h4" component="h1" fontWeight="bold" color="primary">
+                            <Typography variant="h4" component="h1" fontWeight="bold">
                                 Profile
                             </Typography>
                             {!isEditing && (

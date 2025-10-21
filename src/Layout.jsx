@@ -4,6 +4,7 @@ import About from './pages/About'
 import Contact from './pages/Contact'
 import Profile from './pages/Profile'
 import RegistrationForm from './pages/RegistrationForm' 
+import Images from './pages/Images'
 import { useState } from 'react'
 import { 
   AppBar, 
@@ -28,6 +29,7 @@ import InfoIcon from '@mui/icons-material/Info'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import ContactsIcon from '@mui/icons-material/Contacts'
 import PersonIcon from '@mui/icons-material/Person'
+import ImageIcon from '@mui/icons-material/Image'
 import { useAuth } from './contexts/AuthContext'
 import Theme from './components/Theme'
 
@@ -48,7 +50,8 @@ export default function Layout() {
         { text: 'Home', path: '/', icon: <HomeIcon /> },
         { text: 'About', path: '/about', icon: <InfoIcon /> },
         { text: 'Contact', path: '/contact', icon: <ContactsIcon /> },
-        { text: 'Profile', path: '/profile', icon: <PersonIcon /> },
+        { text: 'Images', path: '/images', icon: <ImageIcon /> },
+        { text: 'Profile', path: '/profile', icon: <PersonIcon /> }
     ]
 
     const drawer = (
@@ -142,6 +145,7 @@ export default function Layout() {
                     <Route path="/about" element={token ? <About /> : <Navigate to="/login" />} />
                     <Route path="/contact" element={token ? <Contact /> : <Navigate to="/login" />} />
                     <Route path="/profile" element={token ? <Profile /> : <Navigate to="/login" />} />
+                    <Route path="/images" element={token ? <Images /> : <Navigate to="/login" />} />
                     <Route path="*" element={<Navigate to={token ? "/" : "/login"} />} />
                 </Routes>
             </Box>

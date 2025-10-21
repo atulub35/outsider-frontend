@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from "react"
 import Post from "./components/Post"
 import CreatePostModal from "./components/CreatePostModal"
-import { Box, Button } from "@mui/material"
+import { Box, Button, Typography } from "@mui/material"
 import { useApi } from "./hooks/useApi"
 import { useAuth } from "./contexts/AuthContext"
 import { isTokenSet } from "./utils/axios"
@@ -150,6 +150,7 @@ const PrivateText = () => {
 
     return(
         <div>
+            <Typography variant="h4" component="h1" fontWeight="bold" gutterBottom>Posts</Typography>
             <Box sx={{ justifyContent: "end", display: "flex", mb: 4 }}>
                 <Button
                     variant="outlined"
