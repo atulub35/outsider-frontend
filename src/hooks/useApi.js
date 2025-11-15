@@ -26,7 +26,17 @@ export const useApi = () => {
       }
     },
 
+    register: async (formData) => {
+      try {
+        return await axiosInstance.post('/users.json', { user: formData })
+      } catch (error) {
+        throw error
+      }
+    },
+
     getProfile: () => axiosInstance.get('/profiles/show.json'),
+
+    getAvatar: (userId) => axiosInstance.get(`/api/users/${userId}/avatar`),
 
     getImages: () => axiosInstance.get('/images.json'),
 

@@ -36,7 +36,8 @@ import {
     Language as LanguageIcon,
     Schedule as ScheduleIcon,
     Delete as DeleteIcon,
-    CheckCircle as CheckCircleIcon
+    CheckCircle as CheckCircleIcon,
+    AccountCircle as AccountCircleIcon
 } from '@mui/icons-material'
 import { useAuth } from '../contexts/AuthContext'
 import { useApi } from '../hooks/useApi'
@@ -44,6 +45,9 @@ import { useApi } from '../hooks/useApi'
 const Profile = ({ currentUser }) => {
     const { token } = useAuth()
     const [profile, setProfile] = useState(null)
+    const [avatarUrl, setAvatarUrl] = useState(null)
+    const [avatarInitials, setAvatarInitials] = useState(null)
+    const [avatarLoading, setAvatarLoading] = useState(false)
     const [isEditing, setIsEditing] = useState(false)
     const [formData, setFormData] = useState({
         name: '',
@@ -73,6 +77,18 @@ const Profile = ({ currentUser }) => {
                     timezone: userData?.timezone || '',
                     remove_avatar: 0
                 })
+                
+                // Set initial fallback initials from profile data
+                if (userData?.name) {
+                    setAvatarInitials(userData.name.charAt(0).toUpperCase())
+                } else if (userData?.email) {
+                    setAvatarInitials(userData.email.charAt(0).toUpperCase())
+                }
+                
+                // Fetch avatar if user ID is available
+                if (userData?.id) {
+                    fetchAvatar(userData.id)
+                }
             } catch (err) {
                 setError('Failed to fetch profile data')
                 setSnackbarOpen(true)
@@ -80,6 +96,41 @@ const Profile = ({ currentUser }) => {
         }
         fetchProfile()
     }, [])
+
+    const fetchAvatar = async (userId) => {
+        if (!userId) return
+        
+        setAvatarLoading(true)
+        try {
+            const response = await api.getAvatar(userId)
+            const data = response?.data
+            
+            if (data?.avatar_url) {
+                setAvatarUrl(data.avatar_url)
+                setAvatarInitials(null)
+            } else if (data?.initials) {
+                setAvatarUrl(null)
+                setAvatarInitials(data.initials)
+            } else {
+                setAvatarUrl(null)
+                setAvatarInitials(null)
+            }
+        } catch (err) {
+            console.error('Error fetching avatar:', err)
+            // Fallback to initials from current profile state
+            setAvatarUrl(null)
+            // Initials will be set from profile data if available
+            if (profile?.name) {
+                setAvatarInitials(profile.name.charAt(0).toUpperCase())
+            } else if (profile?.email) {
+                setAvatarInitials(profile.email.charAt(0).toUpperCase())
+            } else {
+                setAvatarInitials(null)
+            }
+        } finally {
+            setAvatarLoading(false)
+        }
+    }
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target
@@ -97,7 +148,14 @@ const Profile = ({ currentUser }) => {
 
         try {
             const response = await api.updateProfile(formData)
-            setProfile(response?.data?.user)
+            const updatedUser = response?.data?.user
+            setProfile(updatedUser)
+            
+            // Refresh avatar after profile update
+            if (updatedUser?.id) {
+                fetchAvatar(updatedUser.id)
+            }
+            
             setSuccess('Profile updated successfully!')
             setSnackbarOpen(true)
             setIsEditing(false)
@@ -158,15 +216,82 @@ const Profile = ({ currentUser }) => {
         </Paper>
     )
 
+    const renderAvatar = () => {
+        const avatarSize = 120
+        
+        if (avatarLoading) {
+            return (
+                <Avatar sx={{ width: avatarSize, height: avatarSize, bgcolor: 'grey.300' }}>
+                    <CircularProgress size={40} />
+                </Avatar>
+            )
+        }
+        
+        if (avatarUrl) {
+            return (
+                <Avatar 
+                    src={avatarUrl} 
+                    alt="Profile avatar"
+                    sx={{ 
+                        width: avatarSize, 
+                        height: avatarSize,
+                        border: 3,
+                        borderColor: 'primary.main'
+                    }}
+                />
+            )
+        }
+        
+        if (avatarInitials) {
+            return (
+                <Avatar 
+                    sx={{ 
+                        width: avatarSize, 
+                        height: avatarSize,
+                        bgcolor: 'primary.main',
+                        fontSize: avatarSize / 2.5,
+                        border: 3,
+                        borderColor: 'primary.light'
+                    }}
+                >
+                    {avatarInitials}
+                </Avatar>
+            )
+        }
+        
+        // Default placeholder
+        return (
+            <Avatar 
+                sx={{ 
+                    width: avatarSize, 
+                    height: avatarSize,
+                    bgcolor: 'grey.400',
+                    border: 3,
+                    borderColor: 'grey.300'
+                }}
+            >
+                <AccountCircleIcon sx={{ fontSize: avatarSize / 1.5 }} />
+            </Avatar>
+        )
+    }
+
     return (
         <Box sx={{ maxWidth: 1200, mx: 'auto', p: 3 }}>
             <Fade in timeout={600}>
                 <Card elevation={3}>
                     <CardContent sx={{ p: 4 }}>
                         <Stack direction="row" justifyContent="space-between" alignItems="center" mb={4}>
-                            <Typography variant="h4" component="h1" fontWeight="bold">
-                                Profile
-                            </Typography>
+                            <Stack direction="row" spacing={3} alignItems="center">
+                                {renderAvatar()}
+                                <Box>
+                                    <Typography variant="h4" component="h1" fontWeight="bold">
+                                        Profile
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        {profile?.email || 'Loading...'}
+                                    </Typography>
+                                </Box>
+                            </Stack>
                             {!isEditing && (
                                 <Button
                                     variant="contained"
