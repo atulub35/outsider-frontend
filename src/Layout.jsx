@@ -5,6 +5,7 @@ import Contact from './pages/Contact'
 import Profile from './pages/Profile'
 import RegistrationForm from './pages/RegistrationForm' 
 import Images from './pages/Images'
+import Chats from './pages/Chats'
 import { useState } from 'react'
 import { 
   AppBar, 
@@ -30,6 +31,7 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import ContactsIcon from '@mui/icons-material/Contacts'
 import PersonIcon from '@mui/icons-material/Person'
 import ImageIcon from '@mui/icons-material/Image'
+import ChatIcon from '@mui/icons-material/Chat'
 import { useAuth } from './contexts/AuthContext'
 import Theme from './components/Theme'
 
@@ -48,9 +50,10 @@ export default function Layout() {
 
     const menuItems = [
         { text: 'Home', path: '/', icon: <HomeIcon /> },
+        { text: 'Chats', path: '/chats', icon: <ChatIcon /> },
+        { text: 'Images', path: '/images', icon: <ImageIcon /> },
         { text: 'About', path: '/about', icon: <InfoIcon /> },
         { text: 'Contact', path: '/contact', icon: <ContactsIcon /> },
-        { text: 'Images', path: '/images', icon: <ImageIcon /> },
         { text: 'Profile', path: '/profile', icon: <PersonIcon /> }
     ]
 
@@ -146,6 +149,7 @@ export default function Layout() {
                     <Route path="/contact" element={token ? <Contact /> : <Navigate to="/login" />} />
                     <Route path="/profile" element={token ? <Profile /> : <Navigate to="/login" />} />
                     <Route path="/images" element={token ? <Images /> : <Navigate to="/login" />} />
+                    <Route path="/chats" element={token ? <Chats /> : <Navigate to="/login" />} />
                     <Route path="*" element={<Navigate to={token ? "/" : "/login"} />} />
                 </Routes>
             </Box>

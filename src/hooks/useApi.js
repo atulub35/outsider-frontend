@@ -62,7 +62,14 @@ export const useApi = () => {
 
     getGeneratedImages: () => axiosInstance.get('/api/images'),
 
-    deleteImage: (imageId) => axiosInstance.delete(`/api/images/${imageId}`)
+    deleteImage: (imageId) => axiosInstance.delete(`/api/images/${imageId}`),
+
+    // Chat APIs
+    getChatMessages: () => axiosInstance.get('/chats.json'),
+
+    sendChatMessage: (message) => axiosInstance.post('/chats/ask.json', { message }),
+
+    clearChatHistory: () => axiosInstance.delete('/chats.json')
   }
 
   return api
